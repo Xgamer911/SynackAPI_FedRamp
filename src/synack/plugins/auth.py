@@ -5,6 +5,8 @@ Functions related to handling and checking authentication.
 
 import pyotp
 import re
+from selenium import webdriver
+from time import sleep
 
 from .base import Plugin
 
@@ -32,12 +34,15 @@ class Auth(Plugin):
         csrf = self.get_login_csrf()
         progress_token = None
         grant_token = None
+        duo_URL = None
         if csrf:
-            progress_token = self.get_login_progress_token(csrf)
+            Duo_URL = self.get_login_progress_token(csrf)
+        if Duo_URL:
+            progress_token = self.get_progress_token(Duo_URL)
         if progress_token:
             grant_token = self.get_login_grant_token(csrf, progress_token)
         if grant_token:
-            url = 'https://platform.synack.com/'
+            url = 'https://platform.ks-fedprod.synack.com/'
             headers = {
                 'X-Requested-With': 'XMLHttpRequest'
             }
@@ -54,9 +59,33 @@ class Auth(Plugin):
                 self.set_login_script()
                 return j.get('access_token')
 
+    def get_progress_token(self,Duo_URL):
+        """Gets Duo to conduct 2FA and retrieves ProgressToken from Accept Terms URL"""
+        #Sets up Selenium Webdriver options
+        options = webdriver.FirefoxOptions()
+        options.add_argument(Duo_URL)
+
+        #Runs Firefox browser with Duo URL
+        firefoxDriver = webdriver.Firefox(options=options)
+
+        #Begins checking for the Accept Terms webpage
+        while True:
+            #This checkURL should sit on Duo URL until User accepts the login connection on Mobile
+            checkURL = firefoxDriver.current_url
+            if 'accept-terms' in checkURL:
+                #Found Accept Terms Webpage and pulls token from URL
+                ProgressToken = checkURL.split("token=",1)[1]
+                break
+            sleep(1)
+        #Waits 3 seconds before closing Firefox browser
+        sleep(3)
+        firefoxDriver.quit()
+        #Returns the ProgressToken to continue authentication
+        return ProgressToken
+
     def get_login_csrf(self):
         """Get the CSRF Token from the login page"""
-        res = self.api.request('GET', 'https://login.synack.com')
+        res = self.api.request('GET', 'https://login.ks-fedprod.synack.com')
         m = re.search('<meta name="csrf-token" content="([^"]*)"',
                       res.text)
         return m.group(1)
@@ -67,7 +96,7 @@ class Auth(Plugin):
             'X-Csrf-Token': csrf
         }
         data = {
-            "authy_token": self.build_otp(),
+            #"authy_token": self.build_otp(), #No longer needed
             "progress_token": progress_token
         }
         res = self.api.login('POST',
@@ -91,7 +120,7 @@ class Auth(Plugin):
                              headers=headers,
                              data=data)
         if res.status_code == 200:
-            return res.json().get("progress_token")
+            return res.json().get("duo_auth_url")
 
     def get_notifications_token(self):
         """Request a new Notifications Token"""
@@ -104,8 +133,8 @@ class Auth(Plugin):
     def set_login_script(self):
         script = "let forceLogin = () => {" +\
             "const loc = window.location;" +\
-            "if(loc.href.startsWith('https://login.synack.com/')) {" +\
-            "loc.replace('https://platform.synack.com');" +\
+            "if(loc.href.startsWith('https://login.ks-fedprod.synack.com/')) {" +\
+            "loc.replace('https://platform.ks-fedprod.synack.com');" +\
             "}};" +\
             "(function() {" +\
             "sessionStorage.setItem('shared-session-com.synack.accessToken'" +\

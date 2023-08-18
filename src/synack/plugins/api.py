@@ -29,7 +29,7 @@ class Api(Plugin):
         if path.startswith('http'):
             base = ''
         else:
-            base = 'https://login.synack.com/api/'
+            base = 'https://login.ks-fedprod.synack.com/api/'
         url = f'{base}{path}'
         res = self.request(method, url, **kwargs)
         return res
@@ -49,7 +49,7 @@ class Api(Plugin):
         if path.startswith('http'):
             base = ''
         else:
-            base = 'https://notifications.synack.com/api/v2/'
+            base = 'https://notifications.ks-fedprod.synack.com/api/v2/'
         url = f'{base}{path}'
 
         if not kwargs.get('headers'):
@@ -77,7 +77,7 @@ class Api(Plugin):
         if path.startswith('http'):
             base = ''
         else:
-            base = 'https://platform.synack.com/api/'
+            base = 'https://platform.ks-fedprod.synack.com/api/'
         url = f'{base}{path}'
 
         if self.db.use_proxies:
