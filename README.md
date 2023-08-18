@@ -9,7 +9,7 @@ Additionally, it is possible to use this to do stupid things that may have you s
 Be familiar with what this tool is doing or don't use it.
 I am not responsible if you get yourself in trouble.
 
-# FERDRAMP
+# FedRamp Platform
 This is a python package is a fork off of bamhm182's SynackAPI at https://github.com/bamhm182/SynackAPI
 
 This is meant for use on the FedRamp platform. In order for this to work, you will need to install the selenium package as well. (pip3 install selenium)
