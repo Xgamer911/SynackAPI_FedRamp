@@ -2,20 +2,18 @@
 
 This is a python package which aims to provide Synack Red Team members an easy way to interact with the Synack API.
 
-I am in no way affiliated with Synack other than being a Synack Red Team member myself.
+I am in no way affiliated with Synack other than being a Synack Team member myself.
 This project may completely break or become unusable at any time through no fault of my own.
 
 Additionally, it is possible to use this to do stupid things that may have you suffer consequences.
 Be familiar with what this tool is doing or don't use it.
 I am not responsible if you get yourself in trouble.
 
-# Contribute
+# FERDRAMP
+This is a python package is a fork off of bamhm182's SynackAPI at https://github.com/bamhm182/SynackAPI
 
-With the state of the official Synack API being undocumented and me having no inside knowledge of it, this project takes a lot of work to upkeep.
-Additionally, there is a good chance you are here for the mission functionality and I am directly contributing to your wallet.
+This is meant for use on the FedRamp platform. In order for this to work, you will need to install the selenium package as well. (pip3 install selenium)
 
-If you have any ability to code and want to help improve this project, I am more than happy to consider PR's.
-Otherwise, you can contribute monetarily through a number of ways found at [https://bpen.io/love](https://bpen.io/love).
 
 # Documentation
 
